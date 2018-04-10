@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">KotlinVideoPlayer</string>
+    <string name="title_activity_player">PlayerActivity</string>
+
+    <!-- 欢迎界面 -->
+    <string name="help">帮助</string>
+    <string name="quit">退出</string>
+    <string name="permission_request_tip">当前应用缺少必要权限。\n\n请点击\"设置\"-\"权限\"-打开所需权限。\n\n最后点击两次后退按钮，即可返回。</string>
+    <string name="action_settings">设置</string>
+</resources>
