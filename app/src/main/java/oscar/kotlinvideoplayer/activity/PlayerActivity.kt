@@ -6,16 +6,16 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.view.SurfaceHolder
 import kotlinx.android.synthetic.main.activity_player.*
 import java.io.IOException
 import java.util.*
 import android.widget.Toast
 import android.media.AudioManager
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import org.jetbrains.anko.*
 import oscar.kotlinvideoplayer.R
+import oscar.kotlinvideoplayer.render.SimpleRender
+import oscar.kotlinvideoplayer.render.VideoRender
 import java.io.File
 
 
@@ -36,13 +36,22 @@ class PlayerActivity : Activity() {
 
     val HIDE_TOOL_TIME = 4000L
 
+    var videoRender: VideoRender? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
+
+        //设置全屏显示
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        //隐藏底部虚拟按键
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+
         initMediaPlayer()
 
-        initHolder()
+        initGlSurfaceView()
 
         play_seek_bar.onSeekBarChangeListener {
             onProgressChanged { seekBar, i, b ->  }
@@ -54,13 +63,13 @@ class PlayerActivity : Activity() {
             }
         }
 
-        danma_btn.onClick { play() }
+        danma_btn.onClick { openVideoFile() }
 
-        play_btn.onClick { pause() }
+        play_btn.onClick { playOrPause() }
 
         back_btn.onClick { finish() }
-        
-        video_surface.onTouch { view, motionEvent ->
+
+        gl_surface_view.onTouch { view, motionEvent ->
             when(motionEvent.action){
                 MotionEvent.ACTION_DOWN->{
                     setToolBarVisible(true)
@@ -101,13 +110,19 @@ class PlayerActivity : Activity() {
         }
     }
 
-    private fun initHolder(){
+    private fun initGlSurfaceView(){
+        gl_surface_view.setEGLContextClientVersion(2)
+        videoRender = VideoRender()
+        videoRender!!.setContext(this)
+        gl_surface_view.setRenderer(videoRender)
+    }
 
-        var holder = video_surface.holder
+    fun getSurface(): Surface{
+        var holder = gl_surface_view.holder
 
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
 
-        holder.addCallback(object : SurfaceHolder.Callback{
+        holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
             }
 
@@ -116,7 +131,7 @@ class PlayerActivity : Activity() {
                 savedPosition = mediaPlayer.currentPosition//当前播放位置
                 mediaPlayer.stop()
                 timer.cancel()
-                if(timeTask != null){
+                if (timeTask != null) {
                     timeTask!!.cancel()
                 }
             }
@@ -136,19 +151,23 @@ class PlayerActivity : Activity() {
             }
 
         })
+
+
+        return Surface(videoRender!!.videoTexture)
     }
 
 
     /**
      * 播放本地多媒体
      */
-    fun play() {
+    private fun openVideoFile() {
         lastTouchTime = System.currentTimeMillis()
         val file = File(videoPath)
         if (file.exists()) {
             try {
                 mediaPlayer.setDataSource(videoPath)
-                mediaPlayer.setDisplay(video_surface.holder)//****************在哪个容器里显示内容
+                //mediaPlayer.setDisplay(video_surface.holder)//****************在哪个容器里显示内容
+                mediaPlayer.setSurface(getSurface())
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
                 mediaPlayer.prepare()
                 play_btn.backgroundResource = R.drawable.bili_player_play_can_pause
@@ -190,7 +209,7 @@ class PlayerActivity : Activity() {
     /**
      * 暂停
      */
-    fun pause() {
+    fun playOrPause() {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.pause()
             play_btn.backgroundResource = R.drawable.bili_player_play_can_play

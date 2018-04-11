@@ -4,12 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <SurfaceView
+<!--    <SurfaceView
         android:id="@+id/video_surface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
-    
+    -->
+
+    <android.opengl.GLSurfaceView
+        android:id="@+id/gl_surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <RelativeLayout
         android:id="@+id/top_tool_layout"
         android:layout_width="match_parent"
