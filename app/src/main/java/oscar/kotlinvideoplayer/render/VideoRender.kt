@@ -25,10 +25,10 @@ import javax.microedition.khronos.opengles.GL10
 
 class VideoRender : GLSurfaceView.Renderer {
     private var frameAvailable = false
-    internal var textureParamHandle: Int = 0
-    internal var textureCoordinateHandle: Int = 0
-    internal var positionHandle: Int = 0
-    internal var textureTranformHandle: Int = 0
+    private var textureParamHandle: Int = 0
+    private var textureCoordinateHandle: Int = 0
+    private var positionHandle: Int = 0
+    private var textureTranformHandle: Int = 0
 
     private var context: Context? = null
 
@@ -47,7 +47,7 @@ class VideoRender : GLSurfaceView.Renderer {
     var videoTexture: SurfaceTexture? = null
         private set
 
-    internal var surfaceListener: SurfaceListener? = null
+    private var surfaceListener: SurfaceListener? = null
 
     interface SurfaceListener {
         fun onCreate()

@@ -22,7 +22,11 @@ import java.io.File
 class PlayerActivity : Activity() {
 
 
-    val videoPath = Environment.getExternalStorageDirectory().path + "/testVideo/[KissSub&FZSD][Kono_Subarashii_Sekai_ni_Shukufuku_o!_2][10][GB][720P][x264_AAC].mp4"
+    val videoFolder = Environment.getExternalStorageDirectory().path + "/Anime/"
+
+    val videoName1 = "[KissSub&FZSD][Kono_Subarashii_Sekai_ni_Shukufuku_o!_2][08][GB][720P][x264_AAC].mp4"
+
+    val videoName2 = "[KissSub&FZSD][Kono_Subarashii_Sekai_ni_Shukufuku_o!_2][10][GB][720P][x264_AAC].mp4"
 
     var mediaPlayer = MediaPlayer()
 
@@ -140,7 +144,7 @@ class PlayerActivity : Activity() {
                 if (savedPosition > 0) {//如果记录的数据有播放进度。
                     try {
                         mediaPlayer.reset()
-                        mediaPlayer.setDataSource(videoPath)
+                        mediaPlayer.setDataSource(videoFolder + videoName1)
                         mediaPlayer.setDisplay(holder)
                         mediaPlayer.prepare()
                     } catch (e: IOException) {
@@ -162,10 +166,10 @@ class PlayerActivity : Activity() {
      */
     private fun openVideoFile() {
         lastTouchTime = System.currentTimeMillis()
-        val file = File(videoPath)
+        val file = File(videoFolder + videoName1)
         if (file.exists()) {
             try {
-                mediaPlayer.setDataSource(videoPath)
+                mediaPlayer.setDataSource(videoFolder + videoName1)
                 //mediaPlayer.setDisplay(video_surface.holder)//****************在哪个容器里显示内容
                 mediaPlayer.setSurface(getSurface())
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
